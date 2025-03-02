@@ -14,9 +14,11 @@ public class Item
     public SpriteCollection m_spriteCollection;
 
     public SpriteRenderer m_rend;
-
-    public void Init(SpriteCollection spriteCollection , GameObject prefab)
+    
+    private Board m_board;
+    public void Init(SpriteCollection spriteCollection , GameObject prefab ,Board board)
     {
+        m_board  = board;
         m_spriteCollection = spriteCollection;
         string emptyPrefab = Constants.PREFAB_EMPTY;
         
@@ -122,14 +124,26 @@ public class Item
     {
         if (View)
         {
-            View.DOScale(0.1f, 0.1f) ;
-                // .OnComplete(
-                // () =>
-                // {
-                //
-                // }
-                // );
+            View.DOScale(0.1f, 0.1f)
+                .OnComplete(
+                () =>
+                {
+                    Release();
+                }
+                );
         }
+    }
+    public void Release()
+    {
+        if (this is BonusItem)
+        {
+            m_board.m_bonusItemPool.Release((BonusItem)this);
+        }
+        else if (this is NormalItem)
+        {
+            m_board.m_normalItemPool.Release((NormalItem)this);
+        }
+        this.View.gameObject.SetActive(false);
     }
 
 

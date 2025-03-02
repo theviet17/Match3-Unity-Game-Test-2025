@@ -59,8 +59,8 @@ public class Board
     public void CreatePool(GameSettings gameSettings , SpriteCollection m_spriteCollection)
     {  
         int initialSize = boardSizeX * boardSizeY;
-        m_normalItemPool = new ObjectPool<NormalItem>(initialSize, m_spriteCollection, m_emptyPrefab);
-        m_bonusItemPool = new ObjectPool<BonusItem>(5, m_spriteCollection, m_emptyPrefab);
+        m_normalItemPool = new ObjectPool<NormalItem>(initialSize, m_spriteCollection, m_emptyPrefab, this);
+        m_bonusItemPool = new ObjectPool<BonusItem>(5, m_spriteCollection, m_emptyPrefab, this);
         // MyClass obj = myClassPool.Get();
     }
     
@@ -77,7 +77,7 @@ public class Board
                 go.transform.SetParent(m_root);
 
                 Cell cell = go.GetComponent<Cell>();
-                cell.Setup(x, y, this);
+                cell.Setup(x, y);
 
                 m_cells[x, y] = cell;
             }
@@ -311,7 +311,7 @@ public class Board
             item.SetView();
             item.SetViewRoot(m_root);
 
-            cellToConvert.Free();
+            cellToConvert.ExplodeItem();
             cellToConvert.Assign(item);
             cellToConvert.ApplyItemPosition(true);
         }

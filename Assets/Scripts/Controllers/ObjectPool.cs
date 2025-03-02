@@ -6,16 +6,18 @@ public class ObjectPool<T> where T : Item, new()
     public Stack<T> pool = new Stack<T>();
     private SpriteCollection m_spriteCollection;
     private GameObject m_emptyPrefab;
+    private Board m_board;
     //Use Object Pooling to reuse Items and Item.Views instead of constantly creating new ones.
-    public ObjectPool( int initialSize, SpriteCollection spriteCollection, GameObject emptyPrefab )
+    public ObjectPool( int initialSize, SpriteCollection spriteCollection, GameObject emptyPrefab, Board board )
     {
         this.m_spriteCollection = spriteCollection;
-        this.m_emptyPrefab = emptyPrefab;   
+        this.m_emptyPrefab = emptyPrefab;
+        m_board = board;
         
         for (int i = 0; i < initialSize; i++)
         {
             T item = new T();
-            item.Init(m_spriteCollection, m_emptyPrefab);
+            item.Init(m_spriteCollection, m_emptyPrefab, m_board);
             
             pool.Push(item);
         }
@@ -31,7 +33,7 @@ public class ObjectPool<T> where T : Item, new()
         {
             Debug.Log("Pool empty");
             T item = new T();
-            item.Init(m_spriteCollection,m_emptyPrefab);
+            item.Init(m_spriteCollection,m_emptyPrefab, m_board);
             return item;
         }
     }
