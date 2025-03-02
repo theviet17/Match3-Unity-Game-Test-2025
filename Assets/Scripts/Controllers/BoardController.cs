@@ -69,7 +69,8 @@ public class BoardController : MonoBehaviour
         }
     }
 
-
+   //Avoid using local hit variables in Update to reduce Garbage Collection.
+    private RaycastHit2D _hit;
     public void Update()
     {
         if (m_gameOver) return;
@@ -87,11 +88,11 @@ public class BoardController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
+            _hit= Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (_hit.collider != null)
             {
                 m_isDragging = true;
-                m_hitCollider = hit.collider;
+                m_hitCollider = _hit.collider;
             }
         }
 
@@ -102,15 +103,15 @@ public class BoardController : MonoBehaviour
 
         if (Input.GetMouseButton(0) && m_isDragging)
         {
-            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
+            _hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (_hit.collider != null)
             {
-                if (m_hitCollider != null && m_hitCollider != hit.collider)
+                if (m_hitCollider != null && m_hitCollider != _hit.collider)
                 {
                     StopHints();
 
                     Cell c1 = m_hitCollider.GetComponent<Cell>();
-                    Cell c2 = hit.collider.GetComponent<Cell>();
+                    Cell c2 = _hit.collider.GetComponent<Cell>();
                     if (AreItemsNeighbor(c1, c2))
                     {
                         IsBusy = true;
