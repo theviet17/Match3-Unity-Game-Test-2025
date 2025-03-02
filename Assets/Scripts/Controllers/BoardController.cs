@@ -154,10 +154,16 @@ public class BoardController : MonoBehaviour
             List<Cell> cells1 = GetMatches(cell1);
             List<Cell> cells2 = GetMatches(cell2);
 
-            List<Cell> matches = new List<Cell>();
-            matches.AddRange(cells1);
-            matches.AddRange(cells2);
-            matches = matches.Distinct().ToList();
+            // List<Cell> matches = new List<Cell>();
+            // matches.AddRange(cells1);
+            // matches.AddRange(cells2);
+            // matches = matches.Distinct().ToList();
+            
+            //HashSet removes duplicates faster than Distinct().
+            HashSet<Cell> hashMatches = new HashSet<Cell>(cells1);
+            hashMatches.UnionWith(cells2);
+            
+            List<Cell> matches = hashMatches.ToList();
 
             if (matches.Count < m_gameSettings.MatchesMin)
             {
