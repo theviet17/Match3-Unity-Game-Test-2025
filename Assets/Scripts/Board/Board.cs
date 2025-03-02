@@ -97,13 +97,14 @@ public class Board
 
     }
 
-    internal void Fill()
+    internal void Fill(List<NormalItem.eNormalType> saveItems , bool onStart = false)
     {
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
+                cell.Free();
                 NormalItem item = m_normalItemPool.Get();//new NormalItem();
                 
 
@@ -132,22 +133,41 @@ public class Board
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(false);
+                if (onStart)
+                {
+                    saveItems.Add( item.ItemType);
+                }
+             
             }
         }
     }
 
-    internal void Shuffle()
+    internal void Shuffle(List<NormalItem.eNormalType> saveItems , bool onStart = false)
     {
         List<Item> list = new List<Item>();
+        List<NormalItem.eNormalType> list2 = new List<NormalItem.eNormalType>();
+        int index = 0;
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
                 list.Add(m_cells[x, y].Item);
                 m_cells[x, y].Free();
+                
+                if (onStart)
+                {
+                    list2.Add(saveItems[index]);
+                    index++;
+                }
+                
             }
         }
 
+        if (onStart)
+        {
+            saveItems.Clear();
+        }
+       
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -155,9 +175,43 @@ public class Board
                 int rnd = UnityEngine.Random.Range(0, list.Count);
                 m_cells[x, y].Assign(list[rnd]);
                 m_cells[x, y].ApplyItemMoveToPosition();
-
+                
+                if (onStart)
+                {
+                    if (list[rnd] is NormalItem)
+                    {
+                        saveItems.Add( list2[rnd] );  
+                    }
+                }
+                
                 list.RemoveAt(rnd);
             }
+        }
+    }
+
+    public void ResetLevel(List<NormalItem.eNormalType> saveItems)
+    {
+        int index = 0;
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                m_cells[x, y].Item.Release();
+                m_cells[x, y].Free();
+
+                NormalItem item = m_normalItemPool.Get();
+                
+                item.SetType(saveItems[index]);
+                item.SetView();
+                item.SetViewRoot(m_root);
+                
+                m_cells[x, y].Assign(item);
+                m_cells[x, y].ApplyItemPosition(false);
+                index++;
+                
+            }
+
+            
         }
     }
 

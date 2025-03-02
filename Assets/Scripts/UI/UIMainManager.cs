@@ -114,6 +114,11 @@ public class UIMainManager : MonoBehaviour
         m_gameManager.LoadLevel(GameManager.eLevelMode.TIMER);
     }
 
+    internal void ReLevel()
+    {
+        m_gameManager.Reset();
+    }
+
     internal void ShowGameMenu()
     {
         m_gameManager.SetState(GameManager.eStateGame.GAME_STARTED);

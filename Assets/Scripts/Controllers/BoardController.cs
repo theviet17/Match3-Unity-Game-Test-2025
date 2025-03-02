@@ -11,7 +11,7 @@ public class BoardController : MonoBehaviour
 
     public bool IsBusy { get; private set; }
 
-    private Board m_board;
+    public Board m_board;
 
     private GameManager m_gameManager;
 
@@ -33,29 +33,55 @@ public class BoardController : MonoBehaviour
 
     private bool m_gameOver;
 
-   
+   bool firstTime = true;
 
     public void StartGame(GameManager gameManager, GameSettings gameSettings , SpriteCollection spriteCollection)
     {
-        m_gameManager = gameManager;
+        if (firstTime)
+        {
+            firstTime = false;
+            
+            m_gameManager = gameManager;
 
-        m_gameSettings = gameSettings;
+            m_gameSettings = gameSettings;
         
-        m_spriteCollection = spriteCollection;
+            m_spriteCollection = spriteCollection;
+            
+            m_gameManager.StateChangedAction += OnGameStateChange;
+            
+            m_cam = Camera.main;
 
-        m_gameManager.StateChangedAction += OnGameStateChange;
+            m_board = new Board(this.transform, gameSettings , m_spriteCollection);
 
-        m_cam = Camera.main;
+            
+        }
+        else
+        {
+            m_hintIsShown = false;
+            m_gameOver = false;
+            IsBusy = false;
+        }
 
-        m_board = new Board(this.transform, gameSettings , m_spriteCollection);
-
+        
         Fill();
+        
+        Debug.Log("game state " + m_gameOver +IsBusy);
+       
     }
 
+    public void Reset()
+    {
+        m_board.ResetLevel(saveItemsToReLoad);
+        StopHints();
+        m_potentialMatch = m_board.GetPotentialMatches();
+        
+    }
+
+    public List<  NormalItem.eNormalType > saveItemsToReLoad = new List< NormalItem.eNormalType>();
     private void Fill()
     {
-        m_board.Fill();
-        FindMatchesAndCollapse();
+        m_board.Fill(saveItemsToReLoad , true);
+        FindMatchesAndCollapse(true);
     }
 
     private void OnGameStateChange(GameManager.eStateGame state)
@@ -188,7 +214,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    private void FindMatchesAndCollapse()
+    private void FindMatchesAndCollapse(bool onStart = false)
     {
         List<Cell> matches = m_board.FindFirstMatch();
 
@@ -208,7 +234,7 @@ public class BoardController : MonoBehaviour
             else
             {
                 //StartCoroutine(RefillBoardCoroutine());
-                StartCoroutine(ShuffleBoardCoroutine());
+                StartCoroutine(ShuffleBoardCoroutine(onStart));
             }
         }
     }
@@ -264,20 +290,20 @@ public class BoardController : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
 
-        m_board.Fill();
+        m_board.Fill(saveItemsToReLoad);
 
         yield return new WaitForSeconds(0.2f);
 
         FindMatchesAndCollapse();
     }
 
-    private IEnumerator ShuffleBoardCoroutine()
+    private IEnumerator ShuffleBoardCoroutine(bool onStart)
     {
-        m_board.Shuffle();
+        m_board.Shuffle(saveItemsToReLoad ,onStart);
 
         yield return new WaitForSeconds(0.3f);
 
-        FindMatchesAndCollapse();
+        FindMatchesAndCollapse(onStart);
     }
 
 

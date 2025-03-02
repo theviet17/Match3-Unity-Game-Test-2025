@@ -85,9 +85,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public eLevelMode curentLevelMode;
     public void LoadLevel(eLevelMode mode)
     {
-        m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
+        if (m_boardController == null)
+        {
+            m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
+        }
+        else
+        {
+            m_boardController.gameObject.SetActive(true);
+        }
         m_boardController.StartGame(this, m_gameSettings, m_spriteCollection);
 
         if (mode == eLevelMode.MOVES)
@@ -100,10 +108,29 @@ public class GameManager : MonoBehaviour
             m_levelCondition = this.gameObject.AddComponent<LevelTime>();
             m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
         }
-
+        curentLevelMode = mode;
         m_levelCondition.ConditionCompleteEvent += GameOver;
 
         State = eStateGame.GAME_STARTED;
+    }
+
+    public void Reset()
+    {
+        if (m_boardController != null)
+        {
+            m_boardController.Reset();
+            if (curentLevelMode == eLevelMode.MOVES)
+            {
+                m_levelCondition = this.gameObject.GetComponent<LevelMoves>();
+                m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
+            }
+            else if (curentLevelMode == eLevelMode.TIMER)
+            {
+                m_levelCondition = this.gameObject.GetComponent<LevelTime>();
+                m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
+            }
+            State = eStateGame.GAME_STARTED;
+        }
     }
 
     public void GameOver()
@@ -115,9 +142,11 @@ public class GameManager : MonoBehaviour
     {
         if (m_boardController)
         {
-            m_boardController.Clear();
-            Destroy(m_boardController.gameObject);
-            m_boardController = null;
+            m_boardController.gameObject.SetActive(false);
+            m_boardController.m_board.m_normalItemPool.ReleaseAll();
+            m_boardController.m_board.m_bonusItemPool.ReleaseAll();
+            // Destroy(m_boardController.gameObject);
+            // m_boardController = null;
         }
     }
 

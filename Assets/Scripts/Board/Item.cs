@@ -36,6 +36,8 @@ public class Item
         if (!string.IsNullOrEmpty(prefabname))
         {
             View.name = prefabname;
+            View.gameObject.SetActive(true);
+            View.transform.localScale = Vector3.one;
             // GameObject prefab = Resources.Load<GameObject>(prefabname);
             // if (prefab)
             // {
@@ -69,8 +71,7 @@ public class Item
         if (View)
         {
             View.position = pos;
-            View.gameObject.SetActive(true);
-            View.transform.localScale = Vector3.one;
+            
         }
     }
 

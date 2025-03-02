@@ -4,6 +4,8 @@ using UnityEngine;
 public class ObjectPool<T> where T : Item, new()
 {
     public Stack<T> pool = new Stack<T>();
+    List<T> active = new List<T>();
+    
     private SpriteCollection m_spriteCollection;
     private GameObject m_emptyPrefab;
     private Board m_board;
@@ -27,19 +29,35 @@ public class ObjectPool<T> where T : Item, new()
         if (pool.Count > 0)
         { 
             Debug.Log("Pool non empty");
-            return pool.Pop();
+            T item = pool.Pop();
+            active.Add(item);
+            return item;
         }
         else
         {
             Debug.Log("Pool empty");
             T item = new T();
             item.Init(m_spriteCollection,m_emptyPrefab, m_board);
+            
+            active.Add(item);
             return item;
         }
     }
-    public void Release(T obj)
+    public void Release(T item)
     {
         Debug.Log("Pool released");
-        pool.Push(obj);
+        active.Remove(item);
+        pool.Push(item);
+    }
+
+    public void ReleaseAll()
+    {
+        while (active.Count > 0)
+        {
+            active[0].View.gameObject.SetActive(false);
+            Release(active[0]);
+        }
+        Debug.Log("Pool released " + active.Count);
+        active.Clear();
     }
 }
