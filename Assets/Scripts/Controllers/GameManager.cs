@@ -118,24 +118,32 @@ public class GameManager : MonoBehaviour
     {
         if (m_boardController != null)
         {
-            m_boardController.Reset();
-            if (curentLevelMode == eLevelMode.MOVES)
-            {
-                m_levelCondition = this.gameObject.GetComponent<LevelMoves>();
-                m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
-            }
-            else if (curentLevelMode == eLevelMode.TIMER)
-            {
-                m_levelCondition = this.gameObject.GetComponent<LevelTime>();
-                m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
-            }
-            State = eStateGame.GAME_STARTED;
+            StartCoroutine(WaitToReset());
         }
+    }
+
+    IEnumerator WaitToReset()
+    {
+        yield return new WaitUntil(() => !m_boardController.IsBusy);
+        m_boardController.Reset();
+        if (curentLevelMode == eLevelMode.MOVES)
+        {
+            m_levelCondition = this.gameObject.GetComponent<LevelMoves>();
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
+        }
+        else if (curentLevelMode == eLevelMode.TIMER)
+        {
+            m_levelCondition = this.gameObject.GetComponent<LevelTime>();
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
+        }
+        State = eStateGame.GAME_STARTED;
+        
     }
 
     public void GameOver()
     {
         StartCoroutine(WaitBoardController());
+        
     }
 
     internal void ClearLevel()
