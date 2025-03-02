@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
 
 
     private GameSettings m_gameSettings;
+    
+    private SpriteCollection m_spriteCollection;
 
 
     private BoardController m_boardController;
@@ -50,6 +52,8 @@ public class GameManager : MonoBehaviour
         State = eStateGame.SETUP;
 
         m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
+
+        m_spriteCollection = Resources.Load<SpriteCollection>(Constants.SPRITE_SETTINGS_PATH);
 
         m_uiMenu = FindObjectOfType<UIMainManager>();
         m_uiMenu.Setup(this);
@@ -84,7 +88,7 @@ public class GameManager : MonoBehaviour
     public void LoadLevel(eLevelMode mode)
     {
         m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
-        m_boardController.StartGame(this, m_gameSettings);
+        m_boardController.StartGame(this, m_gameSettings, m_spriteCollection);
 
         if (mode == eLevelMode.MOVES)
         {

@@ -10,24 +10,46 @@ public class Item
     public Cell Cell { get; private set; }
 
     public Transform View { get; private set; }
+    
+    public SpriteCollection m_spriteCollection;
 
+    public SpriteRenderer m_rend;
 
+    public void Init(SpriteCollection spriteCollection , GameObject prefab)
+    {
+        m_spriteCollection = spriteCollection;
+        string emptyPrefab = Constants.PREFAB_EMPTY;
+        
+        View = GameObject.Instantiate(prefab).transform;
+        m_rend = View.GetComponent<SpriteRenderer>();
+        
+        View.gameObject.SetActive(false);
+    }
     public virtual void SetView()
     {
         string prefabname = GetPrefabName();
+        Sprite sprite = GetSprite();
+       // SS
 
         if (!string.IsNullOrEmpty(prefabname))
         {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
-            if (prefab)
-            {
-                View = GameObject.Instantiate(prefab).transform;
-            }
+            View.name = prefabname;
+            // GameObject prefab = Resources.Load<GameObject>(prefabname);
+            // if (prefab)
+            // {
+            //     View = GameObject.Instantiate(prefab).transform;
+            // }
+        }
+        if (sprite != null)
+        {
+            m_rend.sprite = sprite;
         }
     }
 
     protected virtual string GetPrefabName() { return string.Empty; }
-
+    
+    protected virtual Sprite GetSprite() { return null; }
+    
     public virtual void SetCell(Cell cell)
     {
         Cell = cell;
@@ -45,6 +67,8 @@ public class Item
         if (View)
         {
             View.position = pos;
+            View.gameObject.SetActive(true);
+            View.transform.localScale = Vector3.one;
         }
     }
 
@@ -98,13 +122,13 @@ public class Item
     {
         if (View)
         {
-            View.DOScale(0.1f, 0.1f).OnComplete(
-                () =>
-                {
-                    GameObject.Destroy(View.gameObject);
-                    View = null;
-                }
-                );
+            View.DOScale(0.1f, 0.1f) ;
+                // .OnComplete(
+                // () =>
+                // {
+                //
+                // }
+                // );
         }
     }
 

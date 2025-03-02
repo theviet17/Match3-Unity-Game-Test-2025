@@ -40,6 +40,27 @@ public class BonusItem : Item
 
         return prefabname;
     }
+    protected override Sprite GetSprite()
+    {
+        Sprite sprite = null;
+        switch (ItemType)
+        {
+            case eBonusType.NONE:
+                break;
+            case eBonusType.HORIZONTAL:
+                sprite = m_spriteCollection.PREFAB_BONUS_HORIZONTAL;
+                break;
+            case eBonusType.VERTICAL:
+                sprite = m_spriteCollection.PREFAB_BONUS_VERTICAL;
+                break;
+            case eBonusType.ALL:
+                sprite = m_spriteCollection.PREFAB_BONUS_BOMB;
+                break;
+        }
+
+        return sprite;
+    }
+    
 
     internal override bool IsSameType(Item other)
     {

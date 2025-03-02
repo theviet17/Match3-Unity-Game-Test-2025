@@ -52,6 +52,36 @@ public class NormalItem : Item
 
         return prefabname;
     }
+    protected override Sprite GetSprite()
+    {  
+        Sprite sprite = null;
+        switch (ItemType)
+        {
+            case eNormalType.TYPE_ONE:
+                sprite = m_spriteCollection.PREFAB_NORMAL_TYPE_ONE;
+                break;
+            case eNormalType.TYPE_TWO:
+                sprite = m_spriteCollection.PREFAB_NORMAL_TYPE_TWO;
+                break;
+            case eNormalType.TYPE_THREE:
+                sprite = m_spriteCollection.PREFAB_NORMAL_TYPE_THREE;
+                break;
+            case eNormalType.TYPE_FOUR:
+                sprite = m_spriteCollection.PREFAB_NORMAL_TYPE_FOUR;
+                break;
+            case eNormalType.TYPE_FIVE:
+                sprite = m_spriteCollection.PREFAB_NORMAL_TYPE_FIVE;
+                break;
+            case eNormalType.TYPE_SIX:
+                sprite = m_spriteCollection.PREFAB_NORMAL_TYPE_SIX;
+                break;
+            case eNormalType.TYPE_SEVEN:
+                sprite = m_spriteCollection.PREFAB_NORMAL_TYPE_SEVEN;
+                break;
+        }
+
+        return sprite;
+    }
 
     internal override bool IsSameType(Item other)
     {

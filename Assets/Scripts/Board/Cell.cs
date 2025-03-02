@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class Cell : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class Cell : MonoBehaviour
     public int BoardY { get; private set; }
 
     public Item Item { get; private set; }
-
+    
     public Cell NeighbourUp { get; set; }
 
     public Cell NeighbourRight { get; set; }
@@ -17,13 +18,14 @@ public class Cell : MonoBehaviour
 
     public Cell NeighbourLeft { get; set; }
 
-
+    private Board m_board;
     public bool IsEmpty => Item == null;
 
-    public void Setup(int cellX, int cellY)
+    public void Setup(int cellX, int cellY, Board board)
     {
         this.BoardX = cellX;
         this.BoardY = cellY;
+        m_board = board;
     }
 
     public bool IsNeighbour(Cell other)
@@ -32,6 +34,22 @@ public class Cell : MonoBehaviour
             BoardY == other.BoardY && Mathf.Abs(BoardX - other.BoardX) == 1;
     }
 
+
+    public void Release()
+    {
+        var temp = Item;
+        
+        if (temp is BonusItem)
+        {
+            m_board.m_bonusItemPool.Release((BonusItem)temp);
+        }
+        else if (temp is NormalItem)
+        {
+            m_board.m_normalItemPool.Release((NormalItem)temp);
+        }
+       
+        Item = null;
+    }
 
     public void Free()
     {
@@ -73,7 +91,8 @@ public class Cell : MonoBehaviour
         if (Item == null) return;
 
         Item.ExplodeView();
-        Item = null;
+        Release();
+        //Item = null;
     }
 
     internal void AnimateItemForHint()

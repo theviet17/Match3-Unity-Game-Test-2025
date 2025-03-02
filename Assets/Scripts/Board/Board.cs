@@ -24,8 +24,16 @@ public class Board
     private Transform m_root;
 
     private int m_matchMin;
+    
+    public ObjectPool<NormalItem> m_normalItemPool;
+    
+    public ObjectPool<BonusItem> m_bonusItemPool;
+    
+    private GameObject m_emptyPrefab;
 
-    public Board(Transform transform, GameSettings gameSettings)
+    private GameObject m_prefabBG;
+    
+    public Board(Transform transform, GameSettings gameSettings , SpriteCollection m_spriteCollection)
     {
         m_root = transform;
 
@@ -36,23 +44,40 @@ public class Board
 
         m_cells = new Cell[boardSizeX, boardSizeY];
 
+        LoadPrefabs();
+        
+        CreatePool(gameSettings, m_spriteCollection);
         CreateBoard();
     }
-
+    //Load the prefab at start instead of loading in Resources every time they are needed.
+    void LoadPrefabs()
+    {
+        m_emptyPrefab = Resources.Load<GameObject>(Constants.PREFAB_EMPTY);
+        
+        m_prefabBG = Resources.Load<GameObject>(Constants.PREFAB_CELL_BACKGROUND);
+    }
+    public void CreatePool(GameSettings gameSettings , SpriteCollection m_spriteCollection)
+    {  
+        int initialSize = boardSizeX * boardSizeY;
+        m_normalItemPool = new ObjectPool<NormalItem>(initialSize, m_spriteCollection, m_emptyPrefab);
+        m_bonusItemPool = new ObjectPool<BonusItem>(5, m_spriteCollection, m_emptyPrefab);
+        // MyClass obj = myClassPool.Get();
+    }
+    
     private void CreateBoard()
     {
         Vector3 origin = new Vector3(-boardSizeX * 0.5f + 0.5f, -boardSizeY * 0.5f + 0.5f, 0f);
-        GameObject prefabBG = Resources.Load<GameObject>(Constants.PREFAB_CELL_BACKGROUND);
+        
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
-                GameObject go = GameObject.Instantiate(prefabBG);
+                GameObject go = GameObject.Instantiate(m_prefabBG);
                 go.transform.position = origin + new Vector3(x, y, 0f);
                 go.transform.SetParent(m_root);
 
                 Cell cell = go.GetComponent<Cell>();
-                cell.Setup(x, y);
+                cell.Setup(x, y, this);
 
                 m_cells[x, y] = cell;
             }
@@ -79,7 +104,8 @@ public class Board
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
-                NormalItem item = new NormalItem();
+                NormalItem item = m_normalItemPool.Get();//new NormalItem();
+                
 
                 List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
                 if (cell.NeighbourBottom != null)
@@ -145,7 +171,7 @@ public class Board
                 Cell cell = m_cells[x, y];
                 if (!cell.IsEmpty) continue;
 
-                NormalItem item = new NormalItem();
+                NormalItem item = m_normalItemPool.Get();//new NormalItem();
 
                 item.SetType(Utils.GetRandomNormalType());
                 item.SetView();
@@ -260,7 +286,7 @@ public class Board
     {
         eMatchDirection dir = GetMatchDirection(matches);
 
-        BonusItem item = new BonusItem();
+        BonusItem item = m_bonusItemPool.Get();//new BonusItem();
         switch (dir)
         {
             case eMatchDirection.ALL:

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fc91cca61dd4674b814a223a8580b5a, type: 3}
+  m_Name: SpriteCollection
+  m_EditorClassIdentifier: 
+  PREFAB_NORMAL_TYPE_ONE: {fileID: 21300000, guid: c12cdac060bca1648873faff065f85e8,
+    type: 3}
+  PREFAB_NORMAL_TYPE_TWO: {fileID: 21300000, guid: b3d03f60a408b6149ba58fff7af8beef,
+    type: 3}
+  PREFAB_NORMAL_TYPE_THREE: {fileID: 21300000, guid: a3dbc24d17c9ee04b93384880a8f7f48,
+    type: 3}
+  PREFAB_NORMAL_TYPE_FOUR: {fileID: 21300000, guid: 3bbd6a925d3f3c44aa3642011798e97a,
+    type: 3}
+  PREFAB_NORMAL_TYPE_FIVE: {fileID: 21300000, guid: 23d4fceb15264594fbd2e61365bdeac4,
+    type: 3}
+  PREFAB_NORMAL_TYPE_SIX: {fileID: 21300000, guid: e27dc4b27cd098d4cb090fa15c2521a3,
+    type: 3}
+  PREFAB_NORMAL_TYPE_SEVEN: {fileID: 21300000, guid: d4e64b790654a1f45a578702cbc7475e,
+    type: 3}
+  PREFAB_BONUS_HORIZONTAL: {fileID: 21300000, guid: a6793917698d3194c89d642f239ee160,
+    type: 3}
+  PREFAB_BONUS_VERTICAL: {fileID: 21300000, guid: e6d222f59eea2c442879b019185454eb,
+    type: 3}
+  PREFAB_BONUS_BOMB: {fileID: 21300000, guid: d7048b7b19e3543408d95e06436ae3d7, type: 3}
