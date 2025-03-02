@@ -93,4 +93,26 @@ public class Cell : MonoBehaviour
     {
         Item.AnimationMoveToPosition();
     }
+    public NormalItem.eNormalType GetNormalType()
+    {
+        string cellName = this.gameObject.name;
+        switch (cellName)
+        {
+            case Constants.PREFAB_NORMAL_TYPE_ONE:
+                return NormalItem.eNormalType.TYPE_ONE;
+            case Constants.PREFAB_NORMAL_TYPE_TWO:
+                return NormalItem.eNormalType.TYPE_TWO;
+            case Constants.PREFAB_NORMAL_TYPE_THREE :
+                return NormalItem.eNormalType.TYPE_THREE;
+            case Constants.PREFAB_NORMAL_TYPE_FOUR:
+                return NormalItem.eNormalType.TYPE_FOUR;
+            case Constants.PREFAB_NORMAL_TYPE_FIVE:
+                return NormalItem.eNormalType.TYPE_FIVE;
+            case Constants.PREFAB_NORMAL_TYPE_SIX :
+                return NormalItem.eNormalType.TYPE_SIX;
+            case Constants.PREFAB_NORMAL_TYPE_SEVEN :
+                return NormalItem.eNormalType.TYPE_SEVEN;
+        }
+        return NormalItem.eNormalType.TYPE_SEVEN;
+    }
 }

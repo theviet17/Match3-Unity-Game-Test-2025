@@ -64,9 +64,6 @@ public class BoardController : MonoBehaviour
 
         
         Fill();
-        
-        Debug.Log("game state " + m_gameOver +IsBusy);
-       
     }
 
     public void Reset()

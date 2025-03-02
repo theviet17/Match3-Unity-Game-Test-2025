@@ -216,26 +216,101 @@ public class Board
     }
 
 
+    // internal void FillGapsWithNewItems()
+    // {
+    //     for (int x = 0; x < boardSizeX; x++)
+    //     {
+    //         for (int y = 0; y < boardSizeY; y++)
+    //         {
+    //             Cell cell = m_cells[x, y];
+    //             if (!cell.IsEmpty) continue;
+    //
+    //             NormalItem item = m_normalItemPool.Get();//new NormalItem();
+    //
+    //             item.SetType(Utils.GetRandomNormalType());
+    //             item.SetView();
+    //             item.SetViewRoot(m_root);
+    //
+    //             cell.Assign(item);
+    //             cell.ApplyItemPosition(true);
+    //         }
+    //     }
+    // }
     internal void FillGapsWithNewItems()
     {
+        Dictionary<NormalItem.eNormalType, int> itemCounts = new Dictionary<NormalItem.eNormalType, int>();
+    
+        // Count
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                if (!cell.IsEmpty)
+                {
+                    if (cell.Item is NormalItem)
+                    {
+                        if (!itemCounts.ContainsKey(cell.GetNormalType()))
+                            itemCounts[cell.GetNormalType()] = 0;
+    
+                        itemCounts[cell.GetNormalType()]++;
+                    }
+                    
+                }
+            }
+        }
+        
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
                 if (!cell.IsEmpty) continue;
-
-                NormalItem item = m_normalItemPool.Get();//new NormalItem();
-
-                item.SetType(Utils.GetRandomNormalType());
+    
+                // Get the item types of the 4 adjacent cells (left, right, up, down)
+                HashSet<NormalItem.eNormalType> adjacentTypes = new HashSet<NormalItem.eNormalType>();
+                if (x > 0 && !m_cells[x - 1, y].IsEmpty)
+                    if (m_cells[x - 1, y].Item is NormalItem)
+                        adjacentTypes.Add(m_cells[x - 1, y].GetNormalType());
+                
+                if (x < boardSizeX - 1 && !m_cells[x + 1, y].IsEmpty)
+                    if (m_cells[x + 1, y].Item is NormalItem)
+                        adjacentTypes.Add(m_cells[x + 1, y].GetNormalType());
+                
+                if (y > 0 && !m_cells[x, y - 1].IsEmpty) 
+                    if (m_cells[x, y - 1].Item is NormalItem)
+                        adjacentTypes.Add(m_cells[x, y - 1].GetNormalType());
+                
+                if (y < boardSizeY - 1 && !m_cells[x, y + 1].IsEmpty) 
+                    if (m_cells[x, y + 1].Item is NormalItem)
+                        adjacentTypes.Add(m_cells[x, y + 1].GetNormalType());
+                
+                List<NormalItem.eNormalType> availableTypes = Enum.GetValues(typeof(NormalItem.eNormalType))
+                    .Cast<NormalItem.eNormalType>()
+                    .Where(t => !adjacentTypes.Contains(t)) // Avoid matching adjacent items
+                    .OrderBy(t => itemCounts.ContainsKey(t) ? itemCounts[t] : 0) // Prioritize the least common type
+                    .ToList();
+                
+                // Select the least common valid item type
+                NormalItem.eNormalType selectedType = availableTypes.First();
+                if (!itemCounts.ContainsKey(selectedType))
+                    itemCounts[selectedType] = 0;
+    
+                itemCounts[selectedType]++;
+    
+                // Create a new item
+                NormalItem item = m_normalItemPool.Get();
+                item.SetType(selectedType);
                 item.SetView();
                 item.SetViewRoot(m_root);
-
+    
+                // Assign the item to the empty cell
                 cell.Assign(item);
                 cell.ApplyItemPosition(true);
             }
         }
     }
+    
 
     internal void ExplodeAllItems()
     {

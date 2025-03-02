@@ -16,6 +16,7 @@ public class Item
     public SpriteRenderer m_rend;
     
     private Board m_board;
+    
     public void Init(SpriteCollection spriteCollection , GameObject prefab ,Board board)
     {
         m_board  = board;
@@ -29,6 +30,7 @@ public class Item
     }
     public virtual void SetView()
     {
+         
         string prefabname = GetPrefabName();
         Sprite sprite = GetSprite();
        // SS
@@ -48,11 +50,14 @@ public class Item
         {
             m_rend.sprite = sprite;
         }
+        //m_normalType = normalType;
     }
 
     protected virtual string GetPrefabName() { return string.Empty; }
     
     protected virtual Sprite GetSprite() { return null; }
+    
+    
     
     public virtual void SetCell(Cell cell)
     {
